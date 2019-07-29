@@ -1,5 +1,4 @@
 from pprint import pprint
-LINECOUNT = 119026
 
 with open("lab-test.csv",encoding="utf8") as fp:
     r = enumerate(fp)

@@ -23,7 +23,7 @@ def freq(wordset):
     required_data = sorted_data[0:5].tolist();
 
     print("Plotting")
-    # print(required_data)
+    pprint(required_data)
     bar_labels = []
     bar_heights = []
     for names, values in required_data:
@@ -31,6 +31,7 @@ def freq(wordset):
         bar_heights.append(values)
 
     bar_x_positions  = [0,1,2,3,4]
+    plt.title('Top 5 used words')
     plt.bar(bar_x_positions, bar_heights,  width = .5)
     plt.xticks(bar_x_positions, bar_labels)
     plt.show()
@@ -39,7 +40,7 @@ with open("lab.csv",encoding="utf8") as fp:
     r = enumerate(fp)
     wordlist = []
     for i, line in tqdm(r, desc='Cleaning'):
-        if (i<1000):
+        if (i<200):
             cleanLine = re.sub('\W+',' ', line)
             words = cleanLine.split(" ")
             for word in words:
