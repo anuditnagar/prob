@@ -1,7 +1,7 @@
 from pprint import pprint
 import re
 
-with open("lab-test.csv",encoding="utf8") as fp:
+with open("lab.csv",encoding="utf8") as fp:
     r = enumerate(fp)
     for i, line in r:
         words = line.split(" ")
