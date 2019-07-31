@@ -1,51 +1,36 @@
+import csv
 import numpy as np
 import matplotlib.pyplot as plt
-from pprint import pprint
-import re
-import csv
 from tqdm import tqdm
+from pprint import pprint
 
-def freq(wordset):
-    freqTable = [];
-    uniqueWordList = []
-    for word in tqdm(wordset, desc='Indexing') :
-        if (word not in uniqueWordList):
-            freqTable.append( (str(word),int(wordset.count(word))) )
-            uniqueWordList.append(word)
+freqTable = []
+with open('lab-q5.csv', 'r') as csvFile:
+    reader = csv.reader(csvFile)
+    next(reader, None)
+    for row in tqdm(reader):
+        freqTable.append((str(row[0]).encode("UTF-8"),int(row[1])))
 
-    # pprint(freqTable)
+csvFile.close()
 
-    print("Sorting")
+print(len(freqTable))
 
-    dtype = [('word', '|S10'), ('frequency', int)]
-    npdata = np.array(freqTable, dtype=dtype)
-    sorted_data = np.sort(npdata, order=['frequency', 'word'])[::-1]
-    required_data = sorted_data[0:5].tolist();
+dtype = [('Word', 'S20'), ('Frequency', int)]
+npdata = np.array(freqTable[:], dtype=dtype)
 
-    print("Plotting")
-    pprint(required_data)
-    bar_labels = []
-    bar_heights = []
-    for names, values in required_data:
-        bar_labels.append(names.decode('UTF-8'))
-        bar_heights.append(values)
+sorted_data = np.sort(npdata, order=['Frequency', 'Word'])[::-1]
+required_data = sorted_data[0:5].tolist();
 
-    bar_x_positions  = [0,1,2,3,4]
-    plt.title('Top 5 used words')
-    plt.bar(bar_x_positions, bar_heights,  width = .5)
-    plt.xticks(bar_x_positions, bar_labels)
-    plt.show()
+print("Plotting")
+pprint(required_data)
+bar_labels = []
+bar_heights = []
+for names, values in required_data:
+    bar_labels.append(str(names)[2:-1])
+    bar_heights.append(values)
 
-with open("lab.csv",encoding="utf8") as fp:
-    r = enumerate(fp)
-    wordlist = []
-    for i, line in tqdm(r, desc='Cleaning'):
-        if (i<200):
-            cleanLine = re.sub('\W+',' ', line)
-            words = cleanLine.split(" ")
-            for word in words:
-                if(word != ''):
-                    wordlist.append(word.lower())
-        else:
-            break
-    freq(wordlist)
+bar_x_positions  = [0,1,2,3,4]
+plt.title('Top 5 used words')
+plt.bar(bar_x_positions, bar_heights,  width = .5)
+plt.xticks(bar_x_positions, bar_labels)
+plt.show()

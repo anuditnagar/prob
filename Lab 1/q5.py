@@ -29,12 +29,9 @@ with open("lab.csv",encoding="utf8") as fp:
     wordlist = []
     print("Cleaning")
     for i, line in tqdm(r):
-        if (i<10000):
-            cleanLine = re.sub('\W+',' ', line)
-            words = cleanLine.split(" ")
-            for word in words:
-                if(word != ''):
-                    wordlist.append(word.lower())
-        else:
-            break
+        cleanLine = re.sub('\W+',' ', line)
+        words = cleanLine.split(" ")
+        for word in words:
+            if(word != ''):
+                wordlist.append(word.lower())
     freq(wordlist)
