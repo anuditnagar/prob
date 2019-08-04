@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from pprint import pprint
 
+print("Indexing")
 freqTable = []
 with open('lab-q5.csv', 'r') as csvFile:
     reader = csv.reader(csvFile)
