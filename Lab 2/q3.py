@@ -22,7 +22,7 @@ for sample_index in range(0, 6):
 
 # print("##### SAMPLE SPACE #####")
 # pprint(sample_space)
-# print("\n")
+print("\n")
 print("##### SAMPLE SPACE COUNTS #####")
 pprint(sample_space_count)
 print("\n")
