@@ -1,4 +1,5 @@
 from pprint import pprint
+from numpy.random import choice
 
 def getFreqTable(arr = []):
     counted = []
@@ -31,12 +32,24 @@ for word, neighbours in wordNeighbours.items():
 # pprint(wordNeighbours)
 # pprint(wordNeighbourFreqency)
 
-def predict(word  = "I"):
+def predict(word  = "i"):
     if(word in wordNeighbourFreqency.keys()):
         ranking = sorted(wordNeighbourFreqency[word].items(), key = lambda x : x[1])[::-1]
         predictions = []
+
+        cand = []
+        weights = []
+        suma = 0
         for word, rank in ranking:
-            predictions.append(word)
+            cand.append(word)
+            weights.append(rank)
+            suma = suma + rank
+
+        for ind in range(len(weights)):
+            weights[ind] = weights[ind]/suma
+
+        predictions = choice(cand, 4, p=weights)
+
         return predictions
     else:
         return ['i']
@@ -46,12 +59,11 @@ while(inp !="exit"):
 
     predictions = predict(inp)
 
-
     for index in range(len(predictions)):
         print(f"{index+1}) {inp} {predictions[index]}")
 
     randomSentence = [inp]
-    for num in range(0,4):
+    for num in range(0,3):
         randomSentence.append( predict( randomSentence[len(randomSentence) - 1] )[0] )
     print('Sentence : ' + ' '.join(randomSentence) + ".")
 
