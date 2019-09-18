@@ -1,62 +1,69 @@
 import csv
 from pprint import pprint
+from tabulate import tabulate
 
 data = []
 
-with open('BAJFINANCE-EQ.csv') as csvfile:
-    reader = csv.reader(csvfile)
-    headers = next(reader)
-    for row in reader:
-        dat = [float(row[1]), float(row[2]), float(row[3]), float(row[4])]
-        data.append(dat)
+file_names = [
+    'BAJFINANCE-EQ.csv',
+    'BANKBARODA-EQ.csv',
+    'PNB-EQ.csv',
+    'YESBANK-EQ.csv'
+]
 
-STARTAMOUNT = 10000
+BETAMOUNT = 50
+calcs = []
+phead=['Stock Name', 'Start Balance', 'Close Balance','Profit',  'Winning Bets', 'Win %',  'Loosing Bets', 'Loss %']
+alpha  = 1;
+for name in file_names:
 
-originalOpen = data[0][0]
-originalHigh = data[0][1]
-originalLow = data[0][2]
-originalClose = data[0][3]
+    with open(name) as csvfile:
+        reader = csv.reader(csvfile)
+        headers = next(reader)
+        for row in reader:
+            dat = [float(row[1]), float(row[2]), float(row[3]), float(row[4])]
+            data.append(dat)
 
-for ind in range(len(data)):
+    STARTAMOUNT = 10000
 
-    '''
-    Average of ( (average of high and low) and (average of open and close) )
-    Input : 10000
-    Output : 21850
-    Profit : 11850
-    '''
-    # predictedClose = ((( originalHigh + originalLow ) / 2) + (( originalOpen + originalClose ) / 2))/2
+    previousOpen = data[0][0]
+    previouslHigh = data[0][1]
+    previousLow = data[0][2]
+    previousClose = data[0][3]
 
-    '''
-    Average of ( average of high and low )
-    Input : 10000
-    Output : 23050
-    Profit : 13050
-    '''
-    predictedClose = (( originalHigh + originalLow ) / 2)
+    wins = 0
+    loss = 0
 
-    '''
-    Average of ( average of open and close )
-    Input : 10000
-    Output : 22650
-    Profit : 12650
-    '''
-    # predictedClose = ( originalOpen + originalClose ) / 2
+    for ind in range(1, len(data)):
+        predictedMidline = (( previouslHigh + previousLow ) / 2)
+        actualMidline = (( data[ind][0] + data[ind][3] ) / 2)
 
-    actualClose = data[ind][3]
-    diffClose = (predictedClose - actualClose)
+        if (data[ind][0] > data[ind][3]):
+            # down
+            if (predictedMidline < actualMidline):
+                # low
+                STARTAMOUNT += BETAMOUNT
+                wins += 1
+            else:
+                # high
+                STARTAMOUNT -= BETAMOUNT
+                loss += 1
+        elif (data[ind][0] < data[ind][3]):
+            # up
+            if (predictedMidline < actualMidline):
+                # low
+                STARTAMOUNT -= BETAMOUNT
+                loss += 1
+            else:
+                # high
+                STARTAMOUNT += BETAMOUNT
+                wins += 1
 
-    if (predictedClose > actualClose):
-        STARTAMOUNT += 50
-    else:
-        STARTAMOUNT -= 50
+        previousOpen = data[ind][0]
+        previouslHigh = data[ind][1]
+        previousLow = data[ind][2]
+        previousClose = data[ind][3]
 
-    originalOpen = data[ind][0]
-    originalHigh = data[ind][1]
-    originalLow = data[ind][2]
-    originalClose = data[ind][3]
+    calcs.append([name, 10000, STARTAMOUNT, STARTAMOUNT - 10000, wins, (wins/(wins+loss))*100, loss, (loss/(wins+loss))*100])
 
-    # print ([diffClose])
-
-print(STARTAMOUNT)
-# pprint(data[0:10])
+print(tabulate(calcs, headers=phead))
